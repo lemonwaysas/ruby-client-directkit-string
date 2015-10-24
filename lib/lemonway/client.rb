@@ -1,4 +1,4 @@
-require "lemon_way/core_ext/hash"
+require "lemonway/core_ext/hash"
 require 'savon'
 require "rexml/document"
 
@@ -8,14 +8,14 @@ module Lemonway
     class Error < StandardError; end
 
     def initialize opts, &block
-      @client = Savon.client(wsdl: opts.delete(:wsdl))
+      @client = Savon.client(wsdl: opts.symbolize_keys!.delete(:wsdl))
 
       Savon.client(&block) if block
 
       @xml_mini_backend = opts.delete(:xml_mini_backend)                        || ActiveSupport::XmlMini_REXML
       @entity_expansion_text_limit = opts.delete(:entity_expansion_text_limit)  || 10**20
 
-      @options = opts.with_indifferent_access
+      @options = opts.camelize_keys.with_indifferent_access
     end
 
     def operations
@@ -33,12 +33,12 @@ module Lemonway
     private
 
     def client_call method_name, *args, &block
-      resp = @client.call method_name, :message => @options.merge(args.extract_options!)
+      resp = @client.call method_name, :message => @options.merge(args.extract_options!.camelize_keys)
       xml  = resp.body.fetch(:"#{method_name}_response").fetch(:"#{method_name}_result")
       hash = with_custom_parser_options { Hash.from_xml(xml).underscore_keys(true).with_indifferent_access }
 
       val = if hash.key?(:e)
-              raise Error, [response.fetch(:e).try(:fetch, :code), response.fetch(:e).try(:fetch, :msg)].join(' : ')
+              raise Error, [hash.fetch(:e).try(:fetch, :code), hash.fetch(:e).try(:fetch, :msg)].join(' : ')
             elsif hash.key?(:trans)
               hash[:trans][:hpay]
             elsif hash.key :wallet
