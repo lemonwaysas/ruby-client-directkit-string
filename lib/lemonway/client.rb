@@ -33,7 +33,7 @@ module Lemonway
     private
 
     def client_call method_name, *args, &block
-      resp = @client.call method_name, :message => @options.merge(args.extract_options!.camelize_keys)
+      resp = @client.call method_name, :message => build_message(args.extract_options!)
       xml  = resp.body.fetch(:"#{method_name}_response").fetch(:"#{method_name}_result")
       hash = with_custom_parser_options { Hash.from_xml(xml).underscore_keys(true).with_indifferent_access }
 
@@ -75,61 +75,16 @@ module Lemonway
       REXML::Document.entity_expansion_text_limit = original_text_limit
     end
 
-
-
-    # def make_body(method_name, attrs={})
-    #   options = {}
-    #   options[:builder] = Builder::XmlMarkup.new(:indent => 2)
-    #   options[:builder].instruct!
-    #   options[:builder].tag! "soap12:Envelope",
-    #                          "xmlns:SOAP-ENV" => "http://schemas.xmlsoap.org/soap/envelope/",
-    #                          "xmlns:ns1"=>"https://ws.hipay.com/soap/payment-v2" do
-    #     options[:builder].tag! "SOAP-ENV:Body" do
-    #       options[:builder].__send__(:method_missing, method_name.to_s.camelize, xmlns: "Service_mb") do
-    #         @options.merge(attrs).each do |key, value|
-    #           ActiveSupport::XmlMini.to_tag(key, value, options)
-    #         end
-    #       end
-    #     end
-    #   end
-    # end
-    #
-    # def query(method, attrs={})
-    #   http          = Net::HTTP.new(@uri.host, @uri.port)
-    #   http.use_ssl  = true if @uri.port == 443
-    #
-    #   req           = Net::HTTP::Post.new(@uri.request_uri)
-    #   req.body      = make_body(method, attrs)
-    #   req.add_field 'Content-type', 'text/xml; charset=utf-8'
-    #
-    #   response = http.request(req).read_body
-    #
-    #   with_custom_parser_options do
-    #     response = Hash.from_xml(response)["Envelope"]['Body']["#{method}Response"]["#{method}Result"]
-    #     response = Hash.from_xml(response).with_indifferent_access.underscore_keys(true)
-    #   end
-    #
-    #   if response.has_key?("e")
-    #     raise Error, [response["e"]["code"], response["e"]["msg"]].join(' : ')
-    #   elsif block_given?
-    #     yield(response)
-    #   else
-    #     response
-    #   end
-    # end
-    #
-    # # quickly retreat date and big decimal potential attributes
-    # def attrs_from_options attrs
-    #   attrs.symbolize_keys!.camelize_keys!
-    #   [:amount, :amountTot, :amountCom].each do |key|
-    #     attrs[key] = sprintf("%.2f",attrs[key]) if attrs.key?(key) and attrs[key].is_a?(Numeric)
-    #   end
-    #   [:updateDate].each do |key|
-    #     attrs[key] = attrs[key].to_datetime.utc.to_i.to_s if attrs.key?(key) and [Date, Time].any?{|k| attrs[key].is_a?(k)}
-    #   end
-    #   attrs
-    # end
-
+    def build_message opts = {}
+      opts = @options.merge(opts.symbolize_keys.camelize_keys)
+      [:amount, :amountTot, :amountCom].each do |key|
+        opts[key] = sprintf("%.2f",opts[key]) if opts.key?(key) and opts[key].is_a?(Numeric)
+      end
+      [:updateDate].each do |key|
+        opts[key] = opts[key].to_datetime.utc.to_i.to_s if opts.key?(key) and [Date, Time].any?{|k| opts[key].is_a?(k)}
+      end
+      opts
+    end
 
   end
 
