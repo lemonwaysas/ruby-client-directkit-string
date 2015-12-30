@@ -7,8 +7,10 @@ module Lemonway
 
     class Error < StandardError; end
 
+    attr_accessor :instance
+
     def initialize opts, &block
-      @client = Savon.client(wsdl: opts.symbolize_keys!.delete(:wsdl))
+      @instance = Savon.client(wsdl: opts.symbolize_keys!.delete(:wsdl))
 
       Savon.client(&block) if block
 
@@ -19,7 +21,7 @@ module Lemonway
     end
 
     def operations
-      @client.operations
+      @instance.operations
     end
 
     def method_missing method_name, *args, &block
@@ -33,7 +35,7 @@ module Lemonway
     private
 
     def client_call method_name, *args, &block
-      resp = @client.call method_name, :message => build_message(args.extract_options!)
+      resp = @instance.call method_name, :message => build_message(args.extract_options!)
       xml  = resp.body.fetch(:"#{method_name}_response").fetch(:"#{method_name}_result")
       hash = with_custom_parser_options { Hash.from_xml(xml).underscore_keys(true).with_indifferent_access }
 
