@@ -2,13 +2,13 @@
 
 # LemonWay
 
-Ruby API client to query LemonWay
+Ruby API client to query LemonWay API
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'lemon_way'
+    gem 'lemonway'
 
 And then execute:
 
@@ -16,7 +16,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install lemon_way
+    $ gem install lemonway
 
 ## Usage
 
@@ -25,29 +25,36 @@ Or install it yourself as:
 3. API response will always be a HashWithIndifferentAccess with underscored keys. Retrieve it as a result or pass a block to the API point method
 
 ```ruby
+# initialize the client
 client = LemonWay::Client.new wl_login: "test",
                               wl_pass: "test",
                               wl_PDV: "test",
                               language: "fr",
                               version: "1.1",
-                              uri:  "https://ws.lemonway.fr/mb/your_merchant_name/dev/directkit/service.asmx"
+                              wsdl:  "https://ws.lemonway.fr/mb/ioio/dev/directkit/service.asmx?wsdl"
 
-response = client.register_wallet my_hash
+# list the available operations as follow : 
+resp = client.operations
+=> [:register_wallet,
+ :update_wallet_details,
+ :update_wallet_status,
+ :register_iban,
+ :register_sdd_mandate,
+ :register_card,
+ ...
+ ]
 
-client.register_wallet my_hash do |response|
-  response.class
-end
-=> HashWithIndifferentAccess
+# requests takes underscored names, and undescored (or camelcased) options, some hash with indifferent access are returned
+resp = client.register_wallet,  wallet: "123",
+                                client_mail:        "nico@las.com",
+                                client_first_name:  "nicolas",
+                                client_last_name:   "nicolas"
+=> { wallet: {id: '123', lwid: "98098"}
+resp[:wallet][:id] == resp['wallet']['id'] == '123'
 
 ```
 
-
-
-## Todo
-
-1. Complete the doc
-2. Test with VCR
-3. Build WebMerchant client
+Please refer to the Lemonway documentation for the complete list of methods and their parameters, or query https://ws.lemonway.fr/mb/[YOUR_DEV_NAME]/dev/directkitxml/service.asmx if Lemonway has provided you a development account 
 
 
 ## Contributing
