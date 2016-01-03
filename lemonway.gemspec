@@ -24,10 +24,12 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry-rails"
   spec.add_development_dependency "yard"
   spec.add_development_dependency "rspec"
+  spec.add_development_dependency "vcr"
   spec.add_development_dependency "webmock"
 
 
   spec.add_dependency "savon"
   spec.add_dependency "activesupport"
+
 
 end
