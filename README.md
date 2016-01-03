@@ -1,4 +1,5 @@
-__Caution : Still under developpement and subject to changes__ 
+[![Build Status](https://travis-ci.org/itkin/lemonway.svg?branch=master)](https://travis-ci.org/itkin/lemonway)
+
 # LemonWay
 
 Ruby API client to query LemonWay
