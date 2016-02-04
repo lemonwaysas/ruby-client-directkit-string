@@ -28,7 +28,6 @@ Or install it yourself as:
 # initialize the client
 client = LemonWay::Client.new wl_login: "test",
                               wl_pass: "test",
-                              wl_PDV: "test",
                               language: "fr",
                               version: "1.1",
                               wsdl:  "https://ws.lemonway.fr/mb/ioio/dev/directkit/service.asmx?wsdl"
