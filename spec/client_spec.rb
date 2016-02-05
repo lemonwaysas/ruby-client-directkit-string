@@ -11,7 +11,7 @@ describe Lemonway::Client do
       :walletIp => "91.222.286.32",
       :wsdl     => "https://ws.lemonway.fr/mb/ioio/dev/directkit/service.asmx?wsdl"
     }
-    YAML.load_file('config.yml')
+    # YAML.load_file('config.yml')
   }
   subject { Lemonway::Client.new(opts) }
 
@@ -48,20 +48,19 @@ describe Lemonway::Client do
   describe :api_methods do
     let(:method_opts){
       {
-        wallet: "123456",
-        client_mail:        "nico123456@las.com",
+        wallet: "1234567",
+        client_mail:        "nico1234567@las.com",
         client_first_name:  "nicolas",
         client_last_name:   "nicolas"
       }
     }
-    it "are delegated to the client instance" , focus: true do
-
+    it "are delegated to the client instance" do
       expect(subject.instance).to receive(:operations).and_return([:register_wallet])
-      expect(subject.instance).to receive(:call).with(:register_wallet, :message => opts.update(method_opts).camelize_keys).and_call_original
-      VCR.use_cassette("create_wallet_success") do
+      expect(subject.instance).to receive(:call).with(:register_wallet, {:message => opts.update(method_opts).camelize_keys}).and_call_original
+      VCR.use_cassette("create_wallet_success",:match_requests_on => [:method]) do
         resp = subject.register_wallet method_opts
-        expect(resp[:id]).to eq "123456"
-        expect(resp[:lwid]).to eq "835"
+        expect(resp[:id]).to eq "1234567"
+        expect(resp[:lwid]).to eq "836"
       end
     end
   end
