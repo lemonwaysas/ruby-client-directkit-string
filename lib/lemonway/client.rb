@@ -9,15 +9,15 @@ module Lemonway
 
     attr_accessor :instance
 
-    def initialize opts, &block
-      @instance = Savon.client(wsdl: opts.symbolize_keys!.delete(:wsdl))
+    def initialize api_opts={}, client_opts={}, &block
+      [api_opts, client_opts].each(&:symbolize_keys!)
 
-      Savon.client(&block) if block
+      @xml_mini_backend = client_opts.delete(:xml_mini_backend)                        || ActiveSupport::XmlMini_REXML
+      @entity_expansion_text_limit = client_opts.delete(:entity_expansion_text_limit)  || 10**20
 
-      @xml_mini_backend = opts.delete(:xml_mini_backend)                        || ActiveSupport::XmlMini_REXML
-      @entity_expansion_text_limit = opts.delete(:entity_expansion_text_limit)  || 10**20
+      @instance = Savon.client client_opts.update(wsdl: api_opts.delete(:wsdl)), &block
 
-      @options = opts.camelize_keys.with_indifferent_access
+      @api_options = api_opts.camelize_keys.with_indifferent_access
     end
 
     def operations
@@ -34,8 +34,8 @@ module Lemonway
 
     private
 
-    def client_call method_name, *args, &block
-      resp = @instance.call method_name, :message => build_message(args.extract_options!)
+    def client_call method_name, message_opts = {}, client_opts = {}, &block
+      resp = @instance.call method_name, client_opts.update(message: build_message(message_opts)), &block
       xml  = resp.body.fetch(:"#{method_name}_response").fetch(:"#{method_name}_result")
       hash = with_custom_parser_options { Hash.from_xml(xml).underscore_keys(true).with_indifferent_access }
 
@@ -78,7 +78,7 @@ module Lemonway
     end
 
     def build_message opts = {}
-      opts = @options.merge(opts.symbolize_keys.camelize_keys)
+      opts = @api_options.merge(opts.symbolize_keys.camelize_keys)
       [:amount, :amountTot, :amountCom].each do |key|
         opts[key] = sprintf("%.2f",opts[key]) if opts.key?(key) and opts[key].is_a?(Numeric)
       end

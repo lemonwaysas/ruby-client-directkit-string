@@ -20,17 +20,35 @@ Or install it yourself as:
 
 ## Usage
 
-1. Initialize a client instance (URI is mandatory, all the params passed are later overridable in method calls)
-2. Query the API : the params as the query name may be underscored, they will be handled appropriately
+1. Initialization : `LemonWay::Client.new(api_params, client_config_options, &client_config_block)`  
+  - `api_options` (Hash) : mandatory hash where are passed the api param you want to reapeat every client query + the `:wsdl` uri  
+  - `client_config_options` (Hash) : optional hash passed to savon to build its [global options](https://github.com/savonrb/savon/blob/master/lib/savon/options.rb) used by the client on every query 
+  - `client_config_block` (Block) : optional block to customize the savon client, takes a [savon global options](https://github.com/savonrb/savon/blob/master/lib/savon/options.rb) instance as param    
+  ```ruby
+client = LemonWay::Client.new {wsdl:  "https://ws.lemonway.fr/mb/my_lemon_name/dev/directkit/service.asmx?wsdl"}, {ssl_verify_mode: :none}
+#is the same as
+client = LemonWay::Client.new {wsdl:  "https://ws.lemonway.fr/mb/my_lemon_name/dev/directkit/service.asmx?wsdl"} do |opts|
+  opts.ssl_verify_mode(:none)
+end  
+  ```
+ 
+2. Query the API directly calling the method on the client instance : `client.api_method_name(params, client_config_override, &client_block_config_override)`
+  - `api_method_name` : Lemonway underscorized mehtod name (refer to the Lemonway doc or to `client.operations` to list them 
+  - `params` (Hash) : params sent to the api, keys will be camelcased to comply with the SOAP convention used by Lemonway
+  - `client_config_override` (Hash) : A hash of config transmitted to the savon client, which overrides the [savon global config](https://github.com/savonrb/savon/blob/master/lib/savon/options.rb) for the current api call only
+  - `client_block_config_override` (Block) : A Block taking a [savon global options](https://github.com/savonrb/savon/blob/master/lib/savon/options.rb) instance as param, to override the client call configuration options
+
+
 3. API response will always be a HashWithIndifferentAccess with underscored keys. Retrieve it as a result or pass a block to the API point method
+
 
 ```ruby
 # initialize the client
-client = LemonWay::Client.new wl_login: "test",
+client = LemonWay::Client.new wsdl:  "https://ws.lemonway.fr/mb/ioio/dev/directkit/service.asmx?wsdl",
+                              wl_login: "test",
                               wl_pass: "test",
                               language: "fr",
-                              version: "1.1",
-                              wsdl:  "https://ws.lemonway.fr/mb/ioio/dev/directkit/service.asmx?wsdl"
+                              version: "1.1"
 
 # list the available operations as follow : 
 resp = client.operations
@@ -53,7 +71,7 @@ resp[:wallet][:id] == resp['wallet']['id'] == '123'
 
 ```
 
-Please refer to the Lemonway documentation for the complete list of methods and their parameters, or query https://ws.lemonway.fr/mb/[YOUR_DEV_NAME]/dev/directkitxml/service.asmx if Lemonway has provided you a development account 
+Please refer to the Lemonway documentation for the complete list of methods and their parameters, or query https://ws.lemonway.fr/mb/[YOUR_LEMONWAY_NAME]/dev/directkitxml/service.asmx if Lemonway has provided you a development account 
 
 
 ## Contributing
