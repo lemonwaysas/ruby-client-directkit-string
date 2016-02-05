@@ -36,17 +36,19 @@ module Lemonway
 
     def client_call method_name, message_opts = {}, client_opts = {}, &block
       resp = @instance.call method_name, client_opts.update(message: build_message(message_opts)), &block
-      xml  = resp.body.fetch(:"#{method_name}_response").fetch(:"#{method_name}_result")
-      hash = with_custom_parser_options { Hash.from_xml(xml).underscore_keys(true).with_indifferent_access }
+      result  = resp.body.fetch(:"#{method_name}_response").fetch(:"#{method_name}_result")
 
-      if hash.key?(:e)
-        raise Error, [hash.fetch(:e).try(:fetch, :code), hash.fetch(:e).try(:fetch, :msg)].join(' : ')
-      elsif hash.key?(:trans)
-        hash[:trans][:hpay]
-      elsif hash.key :wallet
-        hash[:wallet]
+      result = with_custom_parser_options { Hash.from_xml(result) } unless result.is_a? Hash
+      result = result.underscore_keys(true).with_indifferent_access
+
+      if result.key?(:e)
+        raise Error, [result.fetch(:e).try(:fetch, :code), result.fetch(:e).try(:fetch, :msg)].join(' : ')
+      elsif result.key?(:trans)
+        result[:trans][:hpay]
+      elsif result.key?(:wallet)
+        result[:wallet]
       else
-        hash
+        result
       end
 
     rescue KeyError => e
