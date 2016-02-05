@@ -39,20 +39,14 @@ module Lemonway
       xml  = resp.body.fetch(:"#{method_name}_response").fetch(:"#{method_name}_result")
       hash = with_custom_parser_options { Hash.from_xml(xml).underscore_keys(true).with_indifferent_access }
 
-      val = if hash.key?(:e)
-              raise Error, [hash.fetch(:e).try(:fetch, :code), hash.fetch(:e).try(:fetch, :msg)].join(' : ')
-            elsif hash.key?(:trans)
-              hash[:trans][:hpay]
-            elsif hash.key :wallet
-              hash[:wallet]
-            else
-              hash
-            end
-
-      if block_given?
-        yield(val)
+      if hash.key?(:e)
+        raise Error, [hash.fetch(:e).try(:fetch, :code), hash.fetch(:e).try(:fetch, :msg)].join(' : ')
+      elsif hash.key?(:trans)
+        hash[:trans][:hpay]
+      elsif hash.key :wallet
+        hash[:wallet]
       else
-        val
+        hash
       end
 
     rescue KeyError => e
