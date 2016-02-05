@@ -25,9 +25,9 @@ Or install it yourself as:
   - `client_config_options` (Hash) : optional hash passed to savon to build its [global options](https://github.com/savonrb/savon/blob/master/lib/savon/options.rb) used by the client on every query 
   - `client_config_block` (Block) : optional block to customize the savon client, takes a [savon global options](https://github.com/savonrb/savon/blob/master/lib/savon/options.rb) instance as param    
   ```ruby
-client = LemonWay::Client.new {wsdl:  "https://ws.lemonway.fr/mb/my_lemon_name/dev/directkit/service.asmx?wsdl"}, {ssl_verify_mode: :none}
+client = LemonWay::Client.new({wsdl:  "https://ws.lemonway.fr/[...]/service.asmx?wsdl"}, {ssl_verify_mode: :none})
 #is the same as
-client = LemonWay::Client.new {wsdl:  "https://ws.lemonway.fr/mb/my_lemon_name/dev/directkit/service.asmx?wsdl"} do |opts|
+client = LemonWay::Client.new wsdl:  "https://ws.lemonway.fr/[...]/service.asmx?wsdl" do |opts|
   opts.ssl_verify_mode(:none)
 end  
   ```
@@ -66,8 +66,8 @@ resp = client.register_wallet,  wallet: "123",
                                 client_mail:        "nico@las.com",
                                 client_first_name:  "nicolas",
                                 client_last_name:   "nicolas"
-=> { wallet: {id: '123', lwid: "98098"}
-resp[:wallet][:id] == resp['wallet']['id'] == '123'
+=> {id: '123', lwid: "98098"}
+resp[:id] == resp['id'] == '123'
 
 ```
 
