@@ -11,7 +11,7 @@ describe Lemonway::Client do
       :walletIp => "91.222.286.32",
       :wsdl     => "https://ws.lemonway.fr/mb/ioio/dev/directkit/service.asmx?wsdl"
     }
-    YAML.load_file('config.yml')
+    # YAML.load_file('config.yml')
   }
   subject { Lemonway::Client.new(opts) }
 
