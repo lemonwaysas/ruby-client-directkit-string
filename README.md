@@ -48,7 +48,8 @@ client = LemonWay::Client.new wsdl:  "https://ws.lemonway.fr/mb/ioio/dev/directk
                               wl_login: "test",
                               wl_pass: "test",
                               language: "fr",
-                              version: "1.1"
+                              version: "1.1",
+                              wallet_ip: "127.0.0.1"
 
 # list the available operations as follow : 
 resp = client.operations
@@ -65,7 +66,8 @@ resp = client.operations
 resp = client.register_wallet,  wallet: "123",
                                 client_mail:        "nico@las.com",
                                 client_first_name:  "nicolas",
-                                client_last_name:   "nicolas"
+                                client_last_name:   "nicolas",
+                                wallet_ip: "127.0.0.1"
 => {id: '123', lwid: "98098"}
 resp[:id] == resp['id'] == '123'
 
