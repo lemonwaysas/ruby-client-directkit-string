@@ -44,7 +44,7 @@ module Lemonway
       if result.key?(:e)
         raise Error, [result.fetch(:e).try(:fetch, :code), result.fetch(:e).try(:fetch, :msg)].join(' : ')
       elsif result.key?(:trans)
-        result[:trans][:hpay]
+        result[:trans].fetch(:hpay, result[:trans])
       elsif result.key?(:wallet)
         result[:wallet]
       else
