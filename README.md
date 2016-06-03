@@ -73,7 +73,7 @@ CLIENT_LEMON = Lemonway::Client.new wsdl:  "https://ws.lemonway.fr/mb/ioio/dev/d
 
   private
   def create_lw_account
-    CLIENT_LEMON = client.register_wallet(wallet: "123",
+    resp = CLIENT_LEMON = client.register_wallet(wallet: "123",
                                 clientMail:        "nico@las.com",
                                 clientFirstName:  "nicolas",
                                 clientLastName:   "nicolas",
@@ -81,8 +81,8 @@ CLIENT_LEMON = Lemonway::Client.new wsdl:  "https://ws.lemonway.fr/mb/ioio/dev/d
     => {id: '123', lwid: "98098"}
 
     # Save the lwid in database
-      create[:id] == create['id'] == '123'
-      user = self.update(lwid: create[:id])
+      resp[:id] == resp['id'] == '123'
+      user = self.update(lwid: resp[:id])
   end
 
 
