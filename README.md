@@ -50,8 +50,7 @@ CLIENT_LEMON = Lemonway::Client.new wsdl:  "https://ws.lemonway.fr/mb/ioio/dev/d
                               wl_login: "test",
                               wl_pass: "test",
                               language: "fr",
-                              version: "1.1",
-                              wallet_ip: "127.0.0.1"
+                              version: "1.1"
 
 # list the available operations as follow :
   CLIENT_LEMON = client.operations
@@ -68,6 +67,16 @@ CLIENT_LEMON = Lemonway::Client.new wsdl:  "https://ws.lemonway.fr/mb/ioio/dev/d
 
 # requests takes underscored names, and undescored (or camelcased) options, some hash with indifferent access are returned
 
+# You need to send the IP of your client, to have it available everywhere do :
+  # application_controller
+
+  before_filter :get_request
+
+    def get_request
+      $request = request
+    end
+
+
 # models/user
   after_create :create_lw_account
 
@@ -77,12 +86,17 @@ CLIENT_LEMON = Lemonway::Client.new wsdl:  "https://ws.lemonway.fr/mb/ioio/dev/d
                                 clientMail:        "nico@las.com",
                                 clientFirstName:  "nicolas",
                                 clientLastName:   "nicolas",
-                                wallet_ip: "127.0.0.1")
+                                payerOrBeneficiary: 1,
+                                wallet_ip: $request.remote_ip,
+                                )
     => {id: '123', lwid: "98098"}
 
     # Save the lwid in database
       resp[:id] == resp['id'] == '123'
       user = self.update(lwid: resp[:id])
+      ########################
+     # Save the :id and not the :lwid, because it's this one that you need for the call after #
+      ##########################
   end
 
 
@@ -90,10 +104,22 @@ CLIENT_LEMON = Lemonway::Client.new wsdl:  "https://ws.lemonway.fr/mb/ioio/dev/d
 
 ```
 # Wallet option :
-  CLIENT_LEMON.get_wallet_details(wallet: 'string', email:"string")
+  # Get wallet details
+  CLIENT_LEMON.get_wallet_details(wallet: 'id(string)', email:"email(string)")
 
 
 ```
+
+```
+  # For crowdfunding
+    # Create like classic user, but add need option, exemple :  Debtor, (value = 1 if debtor) (example for project)
+
+    # First credit the user wallet.
+
+
+
+```
+
 
 
 
