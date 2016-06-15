@@ -39,16 +39,16 @@ module Lemonway
       result  = resp.body.fetch(:"#{method_name}_response").fetch(:"#{method_name}_result")
 
       result = with_custom_parser_options { Hash.from_xml(result) } unless result.is_a? Hash
-      result = result.underscore_keys(true).with_indifferent_access
+      @result = result.underscore_keys(true).with_indifferent_access
 
-      if result.key?(:e)
-        raise Error, [result.fetch(:e).try(:fetch, :code), result.fetch(:e).try(:fetch, :msg)].join(' : ')
-      elsif result.key?(:trans)
-        result[:trans].fetch(:hpay, result[:trans])
-      elsif result.key?(:wallet)
-        result[:wallet]
+      if @result.key?(:e)
+        raise Error, [@result.fetch(:e).try(:fetch, :code), @result.fetch(:e).try(:fetch, :msg)].join(' : ')
+      elsif @result.key?(:trans)
+        @result[:trans].fetch(:hpay, @result[:trans])
+      elsif @result.key?(:wallet)
+        @result[:wallet]
       else
-        result
+        @result
       end
 
     rescue KeyError => e
