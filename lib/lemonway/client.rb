@@ -42,7 +42,7 @@ module Lemonway
       result = result.underscore_keys(true).with_indifferent_access
 
       if result.key?(:e)
-        [result.fetch(:e).try(:fetch, :code), result.fetch(:e).try(:fetch, :msg)].join(' : ')
+        {error: result.fetch(:e).try(:fetch, :code), message: result.fetch(:e).try(:fetch, :msg) }
       elsif result.key?(:trans)
         result[:trans].fetch(:hpay, result[:trans])
       elsif result.key?(:wallet)
