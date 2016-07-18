@@ -73,7 +73,7 @@ resp[:id] == resp['id'] == '123'
 
 ```
 
-Please refer to the Lemonway documentation for the complete list of methods and their parameters, or query https://ws.lemonway.fr/mb/[YOUR_LEMONWAY_NAME]/dev/directkitxml/service.asmx if Lemonway has provided you a development account 
+Please refer to the Lemonway documentation for the complete list of methods and their parameters, or query https://ws.lemonway.fr/mb/[YOUR_LEMONWAY_NAME]/dev/directkit/service.asmx if Lemonway has provided you a development account 
 
 
 ## Contributing
