@@ -5,15 +5,22 @@ require "rexml/document"
 module Lemonway
   class Client
 
-    class Error < StandardError; end
+    class Error < StandardError
+      attr_reader :code
+
+      def initialize(code: nil, message:)
+        super(message)
+        @code = code
+      end
+    end
 
     attr_accessor :instance
 
     def initialize api_opts={}, client_opts={}, &block
       [api_opts, client_opts].each(&:symbolize_keys!)
 
-      @xml_mini_backend = client_opts.delete(:xml_mini_backend)                        || ActiveSupport::XmlMini_REXML
-      @entity_expansion_text_limit = client_opts.delete(:entity_expansion_text_limit)  || 10**20
+      @xml_mini_backend = client_opts.delete(:xml_mini_backend) || ActiveSupport::XmlMini_REXML
+      @entity_expansion_text_limit = client_opts.delete(:entity_expansion_text_limit) || 10**20
 
       @instance = Savon.client client_opts.update(wsdl: api_opts.delete(:wsdl)), &block
 
@@ -42,7 +49,7 @@ module Lemonway
       result = result.underscore_keys(true).with_indifferent_access
 
       if result.key?(:e)
-        raise Error, number: result.fetch(:e).try(:fetch, :code), message: result.fetch(:e).try(:fetch, :msg)
+        raise Error, code: result.fetch(:e).try(:fetch, :code), message: result.fetch(:e).try(:fetch, :msg)
       elsif result.key?(:trans)
         result[:trans].fetch(:hpay, result[:trans])
       elsif result.key?(:wallet)
@@ -53,7 +60,7 @@ module Lemonway
 
     rescue KeyError => e
       #todo improve this message
-      raise Error, "#{e.message}, expected `#{method_name}_response.#{method_name}_result` but got : #{resp.body.inspect}"
+      raise Error, message: "#{e.message}, expected `#{method_name}_response.#{method_name}_result` but got : #{resp.body.inspect}"
     end
 
     # work around for
