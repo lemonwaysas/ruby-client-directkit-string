@@ -53,7 +53,7 @@ CLIENT_LEMON = Lemonway::Client.new wsdl:  "https://ws.lemonway.fr/mb/ioio/dev/d
                               version: "1.1"
 
 # list the available operations as follow :
-  CLIENT_LEMON = client.operations
+  CLIENT_LEMON.operations
   => [:register_wallet,
    :update_wallet_details,
    :update_wallet_status,
