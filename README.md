@@ -114,8 +114,34 @@ CLIENT_LEMON = Lemonway::Client.new wsdl:  "https://ws.lemonway.fr/mb/ioio/dev/d
   # For crowdfunding
     # Create like classic user, but add need option, exemple :  Debtor, (value = 1 if debtor) (example for project)
 
-    # First credit the user wallet.
 
+    def contribution
+      # First initialise the webkit
+
+      fill_user_wallet = CLIENT_LEMON.money_in_web_init(
+        wallet: current_user.lwid,
+        amountTot: @contribution.amount.to_f,
+        wkToken: @contribution.id,
+        returnUrl: after_payment_url,
+        errorUrl: after_payment_url,
+        cancelUrl: after_payment_url,
+        autoCommission: 0,
+        wallet_ip: $request.remote_ip)
+
+          # define in your routes.rb the root of after_payment
+
+      # Then call the webkit :
+
+      redirect_to(ENV['LW_WEBKIT'] + "?moneyInToken=#{fill_user_wallet[:moneyinweb][:token]}")
+    end
+
+    # And after_payment :
+
+    def after_payment
+      CLIENT_LEMON.get_money_in_trans_details(transactionMerchantToken: params[:response_wkToken], wallet_ip: $request.remote_ip)
+
+      # redirect where you want
+    end
 
 
 ```
