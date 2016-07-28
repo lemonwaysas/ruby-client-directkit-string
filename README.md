@@ -102,7 +102,7 @@ CLIENT_LEMON = Lemonway::Client.new wsdl:  "https://ws.lemonway.fr/mb/ioio/dev/d
 
 ```
 
-```
+```ruby
 # Wallet option :
   # Get wallet details
   CLIENT_LEMON.get_wallet_details(wallet: 'id(string)', email:"email(string)")
@@ -110,7 +110,7 @@ CLIENT_LEMON = Lemonway::Client.new wsdl:  "https://ws.lemonway.fr/mb/ioio/dev/d
 
 ```
 
-```
+```ruby
   # For crowdfunding
     # Create like classic user, but add need option, exemple :  Debtor, (value = 1 if debtor) (example for project)
 
