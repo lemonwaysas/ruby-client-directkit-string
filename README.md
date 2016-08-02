@@ -20,14 +20,14 @@ Or install it yourself as:
 
 ## Usage
 
-1. Initialization : `LemonWay::Client.new(api_params, client_config_options, &client_config_block)`  
+1. Initialization : `Lemonway::Client.new(api_params, client_config_options, &client_config_block)`  
   - `api_options` (Hash) : mandatory hash where are passed the api param you want to reapeat every client query + the `:wsdl` uri  
   - `client_config_options` (Hash) : optional hash passed to savon to build its [global options](https://github.com/savonrb/savon/blob/master/lib/savon/options.rb) used by the client on every query 
   - `client_config_block` (Block) : optional block to customize the savon client, takes a [savon global options](https://github.com/savonrb/savon/blob/master/lib/savon/options.rb) instance as param    
   ```ruby
-client = LemonWay::Client.new({wsdl:  "https://ws.lemonway.fr/[...]/service.asmx?wsdl"}, {ssl_verify_mode: :none})
+client = Lemonway::Client.new({wsdl:  "https://ws.lemonway.fr/[...]/service.asmx?wsdl"}, {ssl_verify_mode: :none})
 #is the same as
-client = LemonWay::Client.new wsdl:  "https://ws.lemonway.fr/[...]/service.asmx?wsdl" do |opts|
+client = Lemonway::Client.new wsdl:  "https://ws.lemonway.fr/[...]/service.asmx?wsdl" do |opts|
   opts.ssl_verify_mode(:none)
 end  
   ```
@@ -44,7 +44,7 @@ end
 
 ```ruby
 # initialize the client
-client = LemonWay::Client.new wsdl:  "https://ws.lemonway.fr/mb/ioio/dev/directkit/service.asmx?wsdl",
+client = Lemonway::Client.new wsdl:  "https://ws.lemonway.fr/mb/ioio/dev/directkit/service.asmx?wsdl",
                               wl_login: "test",
                               wl_pass: "test",
                               language: "fr",
