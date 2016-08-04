@@ -36,7 +36,7 @@ module Lemonway
 
     def client_call method_name, message_opts = {}, client_opts = {}, &block
       resp = @instance.call method_name, client_opts.update(message: build_message(message_opts)), &block
-      result  = resp.body.fetch(:"#{method_name}_response").fetch(:"#{method_name}_result")
+      result = resp.body.fetch(:"#{method_name}_response").fetch(result(method_name))
 
       result = with_custom_parser_options { Hash.from_xml(result) } unless result.is_a? Hash
       result = result.underscore_keys(true).with_indifferent_access
@@ -84,7 +84,12 @@ module Lemonway
       opts
     end
 
+    def result(method_name)
+      if method_name == :money_in_with_card_id
+        "money_in_result"
+      else
+        "#{method_name}_result"
+      end.to_sym
+    end
   end
-
 end
-

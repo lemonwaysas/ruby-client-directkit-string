@@ -63,6 +63,19 @@ describe Lemonway::Client do
         expect(resp[:lwid]).to eq "836"
       end
     end
+
+    it '#money_in_with_card_id' do
+      money_in_opts = method_opts.merge({ card_id: '27', amount_tot: '3.14'})
+
+      expect(subject.instance).to receive(:operations).and_return([:money_in_with_card_id])
+      expect(subject.instance).to receive(:call).with(:money_in_with_card_id, {:message => opts.update(money_in_opts).camelize_keys}).and_call_original
+      VCR.use_cassette("money_in_with_card_id_success") do
+        resp = subject.money_in_with_card_id money_in_opts
+        expect(resp[:rec]).to eq "1234567"
+        expect(resp[:cred]).to eq "3.14"
+        expect(resp[:status]).to eq "3"
+      end
+    end
   end
 
 end
