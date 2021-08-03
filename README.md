@@ -1,3 +1,5 @@
+⚠️WARNING: This client is deprecated⚠️ 
+
 [![Build Status](https://travis-ci.org/itkin/lemonway.svg?branch=master)](https://travis-ci.org/itkin/lemonway)
 
 # LemonWay
